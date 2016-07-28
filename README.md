@@ -8,7 +8,7 @@ a project about finding friends
 
 ####开发
 
-webapp的开发只需要拉取#####webapp目录,
+webapp的开发只需要拉取**webapp**目录,
 执行 'npm install'命令,安装相关依赖。
 
 服务端开发需拉去整个项目。
