@@ -92,7 +92,7 @@ const UserSchema = new Schema({
 UserSchema.virtual('password').set(function(password) {
   this._password = password
   this.salt = this.makeSalt()
-  this.hashed_password = this.hashPassword(password)
+  this.hashedPassword = this.hashPassword(password)
 }).get(() => this._password)
 //pre save hook 除了第三方登陆,存储的密码不能为空
 UserSchema.pre('save', (next) => {
@@ -130,7 +130,7 @@ function validateUniqueEmail(value, callback) {
   })
 }
 
-//其他方式登录的时候不
+//其他方式登录的时候可以不设置密码
 function validatePresenceOf(value) {
   // If you are authenticating by any of the oauth strategies, don't validate.
   return (this.provider && this.provider !== 'local') || (value && value.length)
@@ -169,7 +169,7 @@ UserSchema.methods = {
    * @api public
    */
   authenticate: function(password) {
-    return this.hashPassword(password) === this.hashed_password
+    return this.hashPassword(password) === this.hashedPassword
   },
 
   /**

@@ -1,6 +1,7 @@
 const User = require('../model').User
 const validator = require('validator')
 const co = require('co')
+const debug = require('debug')('http')
 
 /**
  * 更新用户资料
@@ -23,7 +24,8 @@ function updateUserInfo(info) {
  * 
  */
 function checkLogin() {
-  if (this.seesion && this.session.user) {
+  // console.log('呵呵呵',this.session,'=======')
+  if (this.session && this.session.user) {
     return true
   }
   return false
@@ -32,9 +34,11 @@ function checkLogin() {
  * 注册用户
  */
 exports.signUp = function *() {
-  let flash, newUser, oldUser, context = this
-  let user = {}, session = this.session
+  let flash, newUser, user = {}, session = this.session
   const body = this.request.body
+  if (checkLogin()) {
+    flash = { error: '已登录' }
+  } 
   if (!body.username) {
     flash = { error: '请输入用户名' }
   }  
@@ -52,7 +56,7 @@ exports.signUp = function *() {
   }
   if (flash) {
     this.flash = flash
-    console.log(flash)
+    debug(flash)
     this.redirect('back')
     return
   }
@@ -77,7 +81,8 @@ exports.signUp = function *() {
     _id: user._id,
     gender: user.gender
   }
-  console.log(session)
+  debug(session)
+  console.log(this.response.header['set-cookie'],'注册成功时')
   this.body = '注册成功'
 }
 /**
@@ -92,7 +97,6 @@ exports.signIn = function *() {
   else {
     const body = this.body
     validator.isEmail(body.tel, 'zh-CN')
-
   }
 }
 /**
@@ -101,12 +105,16 @@ exports.signIn = function *() {
  * returns {void}
  */
 exports.signOut = function *(next) {
+  console.log(this.cookie, 'cookie')
+  console.log(this.session, '<<<<', checkLogin())
   if (checkLogin()) {
     this.session = null
-    this.redirect('back')
+    this.body = '已退出'
+    // this.redirect('back')
   }
   else {
     this.flash = { error: '未登录!' }
-    this.redirect('/signin')
+    this.body = '未登录'
+    // this.redirect('/signin')
   }
 }
