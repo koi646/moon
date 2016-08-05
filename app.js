@@ -15,9 +15,6 @@ require('./model')
 app.keys = ['secret', 'secret2']
 // global middlewares
 app.use(bodyparser())
-app.use(function *() {
-  this.body = this.request.body
-})
 onerror(app)
 app.use(logger())
 app.use(views('views', {
