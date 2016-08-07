@@ -1,5 +1,6 @@
-const User = require('../model').User,
+const User = require('../models').User,
   tool = require('../comment/tool'),
+  passport = require('koa-passport'),
   checkLogin = tool.checkLogin,
   debug = require('debug')('http')
 exports.get = function *() {
@@ -10,30 +11,20 @@ exports.get = function *() {
     yield this.render('index')
   }
 }
-exports.post = function *() {
-  if (checkLogin(this)) {
-    debug(this.session.user.username + ' 已登陆')
-    this.flash = { error: '已登陆' }
-    this.body = '已登陆'
-  }
-  else {
-    let body = this.request.body
-    let user = yield User.findOne({ tel: body.tel })
-    console.log(body, user, '什么鬼')
-    if (user && (yield tool.bcompare(body.password, user.password))) {
-      this.session = {
-        username: user.username,
-        tel: user.tel,
-        _id: user._id,
-        gender: user.gender
-      }
-      debug('用户' + user.username + '登陆成功')
-      this.body = '登陆成功'
+//注册逻辑使用passport中间件 方便以后wechat登陆的扩展性
+exports.post = function *(next) { 
+  const context = this
+  yield passport.authenticate('local', function *(err, user, info) {
+    if (err) {
+      console.log(err)
+    }
+    if (user === false) {
+      context.flash = { error: '用户名或密码错误' }
+      context.body = '用户名或密码错误'
     }
     else {
-      debug('用户名 密码错误')
-      this.flash = { error: '用户名或密码错误' }
-      this.body = '用户名或密码错误'
-    }  
-  }
+      yield context.login(user)
+      context.body = '用户 ' + user.username + ' 登录成功'
+    }
+  })
 }

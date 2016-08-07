@@ -1,6 +1,6 @@
 const tool = require('../comment/tool'),
   checkLogin = tool.checkLogin,
-  User = require('../model').User,
+  User = require('../models').User,
   debug = require('debug')('http')
 /**
  * 注册用户
@@ -9,7 +9,8 @@ exports.get = function *() {
   yield this.render('index')
 }
 exports.post = function *() {
-  let flash, newUser, user = {}, session = this.session
+  let flash, newUser, user = {}
+  //  session = this.session
   const body = this.request.body
   if (checkLogin(this)) {
     flash = { error: '已登录' }
@@ -32,14 +33,14 @@ exports.post = function *() {
   if (flash) {
     console.log(flash)
     this.flash = flash
-    this.redirect('back')
     return
   }
   user.password = yield tool.bhash(body.password)
   user.tel = body.tel
+  user.email = body.email
   user.username = body.username
   user.height = body.height
-  user.gender = body.gender,
+  user.gender = body.gender
   newUser = new User(user)
   try {
     user = yield newUser.save()
@@ -47,15 +48,15 @@ exports.post = function *() {
   catch (e) {
     console.log(e, '存储新用户出错')
     this.body = '出错'
-    this.redirect('back')
     return 
   }
-  session.user = {
-    username: user.username,
-    tel: user.tel,
-    _id: user._id,
-    gender: user.gender
-  }
-  debug(session)
-  this.body = '注册成功'
+  // session.user = {
+  //   username: user.username,
+  //   tel: user.tel,
+  //   _id: user._id,
+  //   gender: user.gender
+  // }
+  // debug(session)
+  yield this.login(user)
+  this.body = '用户' + user.username + '注册成功'
 }

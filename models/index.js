@@ -19,5 +19,4 @@ mongoose.Promise = Promise
 // }, function(err) {
 //   console.log(err)
 // })
-User.find({ username: '李雨航' }).then(function(doc) { console.log(doc) })
 exports.User = User

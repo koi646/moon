@@ -6,12 +6,21 @@ let app = require('koa')(),
   views = require('koa-views'),
   onerror = require('koa-onerror'),
   session = require('koa-generic-session'),
+  passport = require('koa-passport'),
   redisStore = require('koa-redis'),
   flash = require('koa-flash'),
   gzip = require('koa-gzip'),
-  config = require('./config.json')
+  config = require('./config.json'),
+  auth = require('./middlewares/auth')
 
-require('./model')
+app.use(function *(next) {
+  var start = new Date
+  yield next
+  var ms = new Date - start
+  console.log('响应时间%s %s - %s', this.method, this.url, ms)
+})
+
+require('./models')
 app.keys = ['secret', 'secret2']
 // global middlewares
 app.use(bodyparser())
@@ -29,18 +38,14 @@ app.use(session({
 app.use(flash())
 // app.use(gzip())
 app.use(json())
-
-app.use(function *(next) {
-  var start = new Date
-  yield next
-  var ms = new Date - start
-  console.log('%s %s - %s', this.method, this.url, ms)
-})
-
+//静态文件
 app.use(require('koa-static')(__dirname + '/public'))
-
-// mount root routes  
+//passport auth 必须放在路由的前面 passport封装的user在context.req.user里面
+app.use(passport.initialize())
+app.use(passport.session())
+// 路由 
 app.use(route(app, './routes'))
+app.use(auth.userRequired)
 
 app.on('error', function(err, ctx) {
   console.error('server error', err, ctx)

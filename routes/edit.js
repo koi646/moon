@@ -1,15 +1,9 @@
 const tool = require('../comment/tool'),
   checkLogin = tool.checkLogin,
-  User = require('../model').User,
+  User = require('../models').User,
   validate = tool.validate,
   debug = require('debug')('http')
 exports.get = function *() {
-  if (!checkLogin(this)) {
-    return this.body = {
-      code: '400',
-      error: '请先登录'
-    }
-  }
   const _id = this.session.user._id
   const user = yield User.findOne({ _id: _id })
   if (!user) {
@@ -25,12 +19,6 @@ exports.get = function *() {
 /* 更新个人资料 */
 exports.post = function *() {
   const body = this.request.body
-  if (!checkLogin(this)) {
-    return this.body = {
-      code: 400,
-      error: '请先登录'
-    }
-  }
   const _id = this.session.user._id
   const newdata = {}
   for (let i in body) {

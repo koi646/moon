@@ -1,5 +1,5 @@
 const tool = require('../comment/tool'),
-  User = require('../model').User,
+  User = require('../models').User,
   validator = require('validator'),
   debug = require('debug')('http'),
   checkLogin = tool.checkLogin
@@ -7,15 +7,15 @@ exports.get = function *() {
   yield this.render('index')
 }
 exports.post = function *() {
-  debug('session: ' + this.session)
-  if (checkLogin(this)) {
-    debug('用户' + this.session.user.username + '已退出')
-    this.session.user = null
-    this.redirect('/signin')
+  console.log(this.user)
+  if (this.isUnauthenticated()) {
+    this.body = '请先登录'
   }
   else {
-    debug('未登录')
-    this.flash = { error: '未登录!' }
-    this.redirect('/signin')
+    console.log(this.session)
+    this.logout()
+    console.log(this.session)
+    this.body = '退出成功'
   }
+
 }
