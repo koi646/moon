@@ -1,7 +1,8 @@
-const checkLogin = require('../lib/util').checkLogin
-const User = require('../model').User
-const validate = require('../lib/util').validate
-const debug = require('debug')('http')
+const tool = require('../comment/tool'),
+  checkLogin = tool.checkLogin,
+  User = require('../model').User,
+  validate = tool.validate,
+  debug = require('debug')('http')
 exports.get = function *() {
   if (!checkLogin(this)) {
     return this.body = {

@@ -1,6 +1,7 @@
-const checkLogin = require('../lib/util').checkLogin
-const User = require('../model').User
-const debug = require('debug')('http')
+const tool = require('../comment/tool'),
+  checkLogin = tool.checkLogin,
+  User = require('../model').User,
+  debug = require('debug')('http')
 /**
  * 注册用户
  */
@@ -16,7 +17,7 @@ exports.post = function *() {
   if (!body.username) {
     flash = { error: '请输入用户名' }
   }  
-  else if (!body || !body.tel && !flash) {
+  else if (!body.tel && !flash) {
     flash = { error: '请输入手机号' }
   }
   else if (!body.password && !flash) {
@@ -34,7 +35,7 @@ exports.post = function *() {
     this.redirect('back')
     return
   }
-  user.password = body.password
+  user.password = yield tool.bhash(body.password)
   user.tel = body.tel
   user.username = body.username
   user.height = body.height

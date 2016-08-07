@@ -1,6 +1,7 @@
-const User = require('../model').User
-const checkLogin = require('../lib/util').checkLogin
-const debug = require('debug')('http')
+const User = require('../model').User,
+  tool = require('../comment/tool'),
+  checkLogin = tool.checkLogin,
+  debug = require('debug')('http')
 exports.get = function *() {
   if (checkLogin(this)) {
     this.redirect('/')
@@ -13,17 +14,13 @@ exports.post = function *() {
   if (checkLogin(this)) {
     debug(this.session.user.username + ' 已登陆')
     this.flash = { error: '已登陆' }
-    this.redirect('back')
+    this.body = '已登陆'
   }
   else {
-    let form = this.request.body
-    let user = yield User.findOne({ tel: form.tel, password: form.password })
-    console.log(form, user, '什么鬼')
-    if (!user) {
-      debug('用户名 密码错误')
-      this.flash = { error: '用户名或密码错误' }
-    }
-    else {
+    let body = this.request.body
+    let user = yield User.findOne({ tel: body.tel })
+    console.log(body, user, '什么鬼')
+    if (user && (yield tool.bcompare(body.password, user.password))) {
       this.session = {
         username: user.username,
         tel: user.tel,
@@ -31,7 +28,12 @@ exports.post = function *() {
         gender: user.gender
       }
       debug('用户' + user.username + '登陆成功')
-      this.redirect('back')
+      this.body = '登陆成功'
+    }
+    else {
+      debug('用户名 密码错误')
+      this.flash = { error: '用户名或密码错误' }
+      this.body = '用户名或密码错误'
     }  
   }
 }
