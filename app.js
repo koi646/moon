@@ -43,9 +43,10 @@ app.use(require('koa-static')(__dirname + '/public'))
 //passport auth 必须放在路由的前面 passport封装的user在context.req.user里面
 app.use(passport.initialize())
 app.use(passport.session())
+// app.use(auth.userRequired)
 // 路由 
 app.use(route(app, './routes'))
-app.use(auth.userRequired)
+
 
 app.on('error', function(err, ctx) {
   console.error('server error', err, ctx)

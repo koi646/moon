@@ -4,10 +4,9 @@ const tool = require('../comment/tool'),
   debug = require('debug')('http'),
   checkLogin = tool.checkLogin
 exports.get = function *() {
-  yield this.render('index')
+  // yield this.render('index')
 }
 exports.post = function *() {
-  console.log(this.user)
   if (this.isUnauthenticated()) {
     this.body = '请先登录'
   }

@@ -34,16 +34,21 @@ passport.use(new LocalStrategy({
 /**
  * 判断用户是否登录
  */
-exports.userRequired = function *(next) {
-  if (this.url !== '/' || this.url !== '/regist') {
-    if (this.isAuthenticated()) {
-      yield next
-    } 
-    else {
-      this.body = { code: 400, error: '请先登陆' }
-    }
-  }
-}
+// exports.userRequired = function *(next) {
+//   const publicUrl = ['/', '/registry', '/signin']
+//   console.log(this.url, this.method)
+//   if (!(this.url in publicUrl)) {
+//     if (this.isAuthenticated()) {
+//       return next
+//     } 
+//     else {
+//       this.body = { code: 400, error: '请先登陆' }
+//     }
+//   }
+//   else {
+//     yield next
+//   }
+// }
 
 
 // exports.adminRequired = function

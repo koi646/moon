@@ -4,12 +4,7 @@ const User = require('../models').User,
   checkLogin = tool.checkLogin,
   debug = require('debug')('http')
 exports.get = function *() {
-  if (checkLogin(this)) {
-    this.redirect('/')
-  }
-  else {
-    yield this.render('index')
-  }
+  yield this.render('index')
 }
 //注册逻辑使用passport中间件 方便以后wechat登陆的扩展性
 exports.post = function *(next) { 

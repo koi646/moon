@@ -16,7 +16,7 @@ webapp的开发只需要拉取**webapp**目录,
 -----
 >   写在开发
 
-项目架构采用 mongodb + vue + vuex + redis的形式,seesion储存在redis里面。暂时不用考虑其他形式登陆。
+项目架构采用 mongodb + vue + vuex + redis的形式,seesion储存在redis里面。email登录,暂时不用考虑其他形式登陆。
 邮件系统需要模块 nodemailer
 
 

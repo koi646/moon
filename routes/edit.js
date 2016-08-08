@@ -1,30 +1,39 @@
 const tool = require('../comment/tool'),
-  checkLogin = tool.checkLogin,
   User = require('../models').User,
   validate = tool.validate,
   debug = require('debug')('http')
 exports.get = function *() {
-  const _id = this.session.user._id
-  const user = yield User.findOne({ _id: _id })
-  if (!user) {
+  let body = {}
+  // const user = JSON.parse(JSON.stringify(this.req.user))
+  const user = this.req.user.toJSON()
+  if (this.isUnauthenticated() || !user) {
     return this.body = {
-      code: '500',
-      error: '服务器错误'
+      code: 400,
+      error: '请先登录'
     }
   }
+  debug(user)
   for (let i in user) {
-    this.body[i] = user[i]
+    console.log('========', i)
+    body[i] = user[i]
+    
   }
+  this.body = body
 }
 /* 更新个人资料 */
 exports.post = function *() {
   const body = this.request.body
-  const _id = this.session.user._id
+  const _id = this.req.user._id
   const newdata = {}
+  let user
   for (let i in body) {
+    debug(i, '==========')
+    debug(validate, i) 
     if (typeof validate[i] === 'function') {
+      debug(validate[i](body[i]), body[i], '<<<<<')
       if (validate[i](body[i])) {
         newdata[i] = body[i]
+        debug(i, newdata[i], '<<<newdata')
       }
       else {
         return this.body = {
@@ -36,7 +45,8 @@ exports.post = function *() {
   }
   
   try {
-    yield User.findOneAndUpdate({ _id: _id }, newdata)
+    user = yield User.findOneAndUpdate({ _id: _id }, newdata)
+    debug(user, '更新用户')
   }
   catch (e) {
     console.log(e)
@@ -44,6 +54,15 @@ exports.post = function *() {
       code: 500,
       error: '服务器内部错误'
     }
+  }
+  if (!user) {
+    return this.body = {
+      code: 402,
+      error: '未找到该用户'
+    }
+  }
+  for (let i in user) {
+    this.req.user[i] = user[i]
   }
   return this.body = {
     code: 0,
