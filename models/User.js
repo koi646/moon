@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
-const validator = require('mongoose-validators')
-const Buffer = require('buffer').Buffer
-const bcrypt = require('bcrypt-then')  //密码加密
+// const validator = require('mongoose-validators')
 const Schema = mongoose.Schema
 const UserSchema = new Schema({
   username: {

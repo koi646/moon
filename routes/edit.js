@@ -4,7 +4,6 @@ const tool = require('../comment/tool'),
   debug = require('debug')('http')
 exports.get = function *() {
   let body = {}
-  // const user = JSON.parse(JSON.stringify(this.req.user))
   const user = this.req.user.toJSON()
   if (this.isUnauthenticated() || !user) {
     return this.body = {
@@ -14,7 +13,6 @@ exports.get = function *() {
   }
   debug(user)
   for (let i in user) {
-    console.log('========', i)
     body[i] = user[i]
     
   }
@@ -27,7 +25,6 @@ exports.post = function *() {
   const newdata = {}
   let user
   for (let i in body) {
-    debug(i, '==========')
     debug(validate, i) 
     if (typeof validate[i] === 'function') {
       debug(validate[i](body[i]), body[i], '<<<<<')
@@ -61,6 +58,7 @@ exports.post = function *() {
       error: '未找到该用户'
     }
   }
+  //更新this.req.user中的用户信息
   for (let i in user) {
     this.req.user[i] = user[i]
   }

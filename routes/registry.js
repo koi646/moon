@@ -1,7 +1,14 @@
 const tool = require('../comment/tool'),
   checkLogin = tool.checkLogin,
   User = require('../models').User,
-  debug = require('debug')('http')
+  Redis = require('ioredis'),
+  debug = require('debug')('http'),
+  redis = new Redis({
+    dropBufferSupport: true, 
+    port: 6379,
+    host: '127.0.0.1',
+    db: 1
+  })
 /**
  * 注册用户
  */
@@ -9,8 +16,17 @@ exports.get = function *() {
   yield this.render('index')
 }
 exports.post = function *() {
-  let flash, newUser, user = {}
-  //  session = this.session
+
+  let flash, newUser, user = {}, follow
+  
+  // try {
+  //   follow = yield redis.zadd('zass', [10, 'aaa', 20, 'cccc', 30, 'sss', 40, 'bbb'])
+  // }
+  // catch (e) {
+  //   console.log(e)
+  // }
+  var a = yield redis.zcard('zass')
+  console.log(a)
   const body = this.request.body
   if (checkLogin(this)) {
     flash = { error: '已登录' }
@@ -47,16 +63,16 @@ exports.post = function *() {
   } 
   catch (e) {
     console.log(e, '存储新用户出错')
-    this.body = '出错'
-    return 
+    return this.body = '出错'
+   
   }
-  // session.user = {
-  //   username: user.username,
-  //   tel: user.tel,
-  //   _id: user._id,
-  //   gender: user.gender
-  // }
-  // debug(session)
+  try {
+    follow = yield redis.zadd('zass', [1, 2, 3, 4])
+  }
+  catch (e) {
+    console.log(e)
+  }
+  console.log(follow)
   yield this.login(user)
   this.body = '用户' + user.username + '注册成功'
 }
