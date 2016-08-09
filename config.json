@@ -1,0 +1,6 @@
+{
+  "mongoURL": "mongodb://localhost/moon",
+  "devMongoURL": "mongodb://localhost/test",
+  "redisURL": "",
+  "devRedisURL": ""  
+}
