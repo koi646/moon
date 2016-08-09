@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const config = require('../config')
 const args = process.argv.splice(2)
 const User = require('./User')
+require('./Follower')
+require('./Follower')
 let mongoURL = ('-dev' in args) ? config.devMongoURL : config.mongoURL
 mongoose.connect(mongoURL)
 //默认返回的是mPromise 这里把mPromise都换为Promise

@@ -48,9 +48,10 @@ webapp的开发只需要拉取**webapp**目录,
   followers: [
     {
       id: 'liyu的follower',
-      followeTime: '2015'
+      followTime: '2015'
     }
-  ]
+  ],
+  weekIncrease: 10 
 }
 ```
 以时间排序即可,性能不会出现问题？
@@ -61,7 +62,7 @@ webapp的开发只需要拉取**webapp**目录,
 因为是webapp的形式,所以只需要在webapp的初始化入口给服务器发个信息包,即可更新最近在线时间。
 同时online中的最后在线改为最近在线时间。
 同时,在用户访问个人主页的时候，服务器端还需要将用户的信息更新在redis中,online最近就从redis中获取。
-5.周排行也要用缓存,存放用户的信息。
+5.周排行也要用redis缓存,存放用户的基本信息。用户Schema中增加hotWeek字段,判断是否为周排行用户
 > 
 业务层更新缓存策略为: 周排行的用户如果更新信息,比如被点赞,更改自己的简介,则需要更新redis里面对应的信息。
 否则只写mongo,周排行读取的时候则对redis进行读取,若redis没有,则对mongo进行读取,并存在redis里面

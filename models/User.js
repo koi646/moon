@@ -34,6 +34,8 @@ const UserSchema = new Schema({
       prinfo: ''     
     }
   },
+  hotweek: { type: Boolean, default: false }, // 周排行
+  
   intro: { type: String }
 })
 //查询的时候可获取virtual属性
