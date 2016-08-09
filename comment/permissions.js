@@ -1,5 +1,8 @@
-const User = require('../models').User
-const redis = require('redis')
+const mongoose = require('mongoose'),
+  User = mongoose.model('User'),
+  Follower = mongoose.model('Follower'),
+  Following = mongoose.model('Following'),
+  redis = require('redis')
 /**
  * 获取别人信息 
  * 若互相关注 则可获取私密评论,若单方关注,只能获取公开信息

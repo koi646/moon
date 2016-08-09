@@ -64,7 +64,6 @@ exports.post = function *() {
   catch (e) {
     console.log(e, '存储新用户出错')
     return this.body = '出错'
-   
   }
   try {
     follow = yield redis.zadd('zass', [1, 2, 3, 4])
